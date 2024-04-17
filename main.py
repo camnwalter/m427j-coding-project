@@ -3,49 +3,47 @@ import numpy.matlib as ml
 import numpy.linalg as linalg
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import math
+import numpy.typing as typing
 
-def interpolate(x_in: list[float], y_in: list[float]) -> list[float]:
+def interpolate(x_in: list[float], y_in: list[float]) -> typing.NDArray[np.float64]:
   a: list[list[float]] = []
   for i in range(len(x_in)):
     a.append([])
     for j in range(len(x_in)):
       a[i].append(pow(x_in[i], j))
 
-  a_mat = ml.mat(a)
-  a_inverse = linalg.inv(a_mat)
+  a_inverse = linalg.inv(np.asmatrix(a, dtype=np.float64))
 
-  output = np.matmul(a_inverse, ml.transpose(y_in)).tolist()
+  output: typing.NDArray[np.float64] = np.matmul(
+    a_inverse,
+    ml.transpose(y_in)
+  )
 
-  for i in range(len(output)):
-    for j in range(len(output[i])):
-      output[i][j] = round(output[i][j], 2)
+  return output.round(2)
 
-  return output
-
-def power_method(AtA: list[list[float]], x_0: list[float]) -> float:
-  x = x_0
-  eigenvalue = 0
+def power_method(AtA: typing.NDArray[np.float64], initial_vec: list[float]) -> float:
+  x = initial_vec
+  eigenvalue = 0.
   for _ in range(20):
     y_i = np.matmul(AtA, x)
 
-    y_transpose_y = np.matmul(ml.transpose(y_i), y_i)
-    eigenvalue = np.sqrt(np.sqrt(y_transpose_y))
+    y_transpose_y: float = np.matmul(ml.transpose(y_i), y_i)
+    eigenvalue = math.sqrt(y_transpose_y)
     x = y_i / eigenvalue
 
   return eigenvalue
 
 def main():
   # Question 1
-  print("1a.", end=" ")
   one_a = interpolate(
     x_in = [0., -1., 1., 2., 4., -2.],
     y_in = [-5., -5.5, -3.5, 29., 1027., -35.]
   )
-  print(one_a)
+  print(f"1a. {one_a}")
 
-  print("1d.", end=" ")
-  # x_in = np.random.uniform(low=0, high=1, size=10)
-  # y_in = np.random.uniform(low=0, high=1, size=10)
+  # x_in = np.random.uniform(size=10)
+  # y_in = np.random.uniform(size=10)
   # f = open("points.txt", "w")
   # for i in range(10):
   #   f.write(str(x_in[i]))
@@ -63,25 +61,24 @@ def main():
     [x, y] = line.split(" ")
     x_in.append(float(x))
     y_in.append(float(y))
+  f.close()
 
   one_d = interpolate(x_in, y_in)
-  print(one_d)
+  print(f"1d. {one_d}")
 
-  def graph(formula, x_range):
-    x = np.array(x_range)
-    y = formula(x)
-    plt.plot(x, y)
-    
-    for i in range(len(x_in)):
-      plt.scatter(x_in[i], y_in[i], c=mcolors.BASE_COLORS["k"])
-
-  def my_formula(x):
+  def formula(x: typing.NDArray[np.float64]) -> typing.NDArray[np.float64]:
     y = 0
     for i in range(len(one_d[0])):
       y += one_d[0][i] * pow(x, i)
     return y
 
-  graph(my_formula, np.arange(0., 1., 0.01))
+  xs = np.linspace(0, 1, 1000, dtype=np.float64)
+  plt.plot(xs, formula(xs))
+
+  for i in range(len(x_in)):
+    plt.scatter(x_in[i], y_in[i], color=mcolors.BASE_COLORS["k"])
+
+  # plt.axis([0, 1, 0, 1])
   plt.show()
 
   # Question 2
@@ -89,7 +86,7 @@ def main():
   for i in range(10):
     a.append([x_in[i], y_in[i]])
 
-  AtA = np.matmul(ml.transpose(a), a)
+  AtA: typing.NDArray[np.float64] = np.matmul(ml.transpose(a), a)
   eigen1 = power_method(AtA, [1., 1.])
   eigen2 = power_method(linalg.inv(AtA), [1., 1.])
   print(f"2a. eigenvalue={eigen1}")
