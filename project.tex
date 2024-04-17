@@ -3,6 +3,8 @@
 \usepackage{amsmath}
 \usepackage{minted}
 \usepackage{subcaption}
+\usepackage{listings}
+\usepackage{hyperref}
 
 \title{Differential Equations Coding Project}
 \author{Cam Walter}
@@ -12,8 +14,7 @@
 
 \maketitle
 
-\section*{Questions}
-
+\section{Questions}
 \begin{enumerate}
       \item
             \begin{enumerate}
@@ -24,7 +25,7 @@
                         polynomial now. This makes sense, since if we added a row to multiply,
                         there would not be enough columns in \textit{A} to match up with \textit{x}'s rows.
                   \item \begin{math}
-                              det(V)=0 \iff \exists x_i, x_j (x_i=x_j)
+                              det(V)=0 \iff \exists x_i, x_j (x_i=x_j, i \neq j)
                         \end{math}
                         \begin{figure}[h]
                               \centering
@@ -38,7 +39,7 @@
                               \caption{Zoomed out and in views of the data set}
                               \label{graph:1}
                         \end{figure}
-                  \item See \ref{graph:1}.
+                  \item See \autoref{graph:1} and \autoref{points}.
                   \item We can use spline interpretation to form a piecewise function
                         comprised ofseveral small polynomials to make the graph much better
                         reflect the data points.
@@ -56,7 +57,10 @@
 
 \pagebreak
 
-\section*{Code}
+\section{Code}
 \inputminted{python3}{main.py}
+
+\section{Points} \label{points}
+\lstinputlisting{points.txt}
 
 \end{document}
