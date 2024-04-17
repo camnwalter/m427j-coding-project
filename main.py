@@ -2,6 +2,7 @@ import numpy as np
 import numpy.matlib as ml
 import numpy.linalg as linalg
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 def interpolate(x_in: list[float], y_in: list[float]) -> list[float]:
   a: list[list[float]] = []
@@ -66,10 +67,13 @@ def main():
   one_d = interpolate(x_in, y_in)
   print(one_d)
 
-  def graph(formula, x_range):  
-    x = np.array(x_range)  
+  def graph(formula, x_range):
+    x = np.array(x_range)
     y = formula(x)
     plt.plot(x, y)
+    
+    for i in range(len(x_in)):
+      plt.scatter(x_in[i], y_in[i], c=mcolors.BASE_COLORS["k"])
 
   def my_formula(x):
     y = 0
